@@ -1,0 +1,27 @@
+[project]
+name = "goit-pythonweb-hw-08"
+version = "0.1.0"
+description = "HW-8"
+authors = [
+    {name = "Darina Khalina",email = "darina.khalina@namecheap.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<4.0"
+
+[tool.poetry.dependencies]
+sqlalchemy = "^2.0.39"
+alembic = "^1.15.1"
+psycopg2 = "^2.9.10"
+alembic-postgresql-enum = "^1.7.0"
+pydantic = {extras = ["email"], version = "^2.11.1"}
+asyncpg = "^0.30.0"
+greenlet = "^3.1.1"
+fastapi = "^0.115.12"
+uvicorn = "^0.34.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
