@@ -20,8 +20,7 @@ class ContactsRepository:
         skip: int | None = None,
         limit: int | None = None,
     ):
-
-        stmt = select(Contact).limit(limit).offset(skip)
+        stmt = select(Contact)
 
         if search is not None:
             stmt = stmt.filter(
@@ -36,17 +35,30 @@ class ContactsRepository:
             today = datetime.now().date()
             week = today + timedelta(days=birthdays_within_days)
 
-            stmt = stmt.filter(
-                or_(
+            today_mmdd = today.strftime("%m-%d")
+            week_mmdd = week.strftime("%m-%d")
+
+            if today_mmdd <= week_mmdd:
+                stmt = stmt.filter(
                     func.to_char(Contact.birthday, "MM-DD").between(
-                        today.strftime("%m-%d"), week.strftime("%m-%d")
+                        today_mmdd, week_mmdd
                     )
                 )
-            )
+            else:
+                stmt = stmt.filter(
+                    or_(
+                        func.to_char(Contact.birthday, "MM-DD") >= today_mmdd,
+                        func.to_char(Contact.birthday, "MM-DD") <= week_mmdd,
+                    )
+                )
 
-        contacts = await self.db.execute(stmt)
+        if skip is not None:
+            stmt = stmt.offset(skip)
+        if limit is not None:
+            stmt = stmt.limit(limit)
 
-        return contacts.scalars().all()
+        result = await self.db.execute(stmt)
+        return result.scalars().all()
 
     async def get_one_or_none(
         self,
